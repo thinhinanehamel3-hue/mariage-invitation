@@ -222,6 +222,37 @@
   }
 
   /* ============================================================
+     BOUTON AUDIO FLOTTANT
+     ============================================================ */
+  #audioBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--gold-dark);
+    box-shadow: 0 4px 15px rgba(184,150,46,0.35);
+    z-index: 2147483647;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid var(--gold);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+  #audioBtn.shown {
+    visibility: visible;
+    opacity: 1;
+  }
+  #audioBtn svg { width:20px; height:20px; fill:#fff; }
+  #audioBtn .icon-play { display: none; }
+  #audioBtn.paused .icon-pause { display: none; }
+  #audioBtn.paused .icon-play { display: block; }
+
+  /* ============================================================
      HERO - IMAGE DE FOND
      ============================================================ */
   #hero {
@@ -251,7 +282,7 @@
     position: absolute;
     inset: 0;
     z-index: 1;
-    
+   
     
   }
 
@@ -277,45 +308,9 @@
     max-width: 800px;
   }
 
-  /* ===== BASMALA & VERSET DANS LE HERO ===== */
-  .hero-bismillah {
-    font-family: 'Amiri', serif;
-    color: var(--gold-dark);
-    font-size: clamp(22px, 3.5vw, 38px);
-    direction: rtl;
-    margin: 0 0 12px 0;
-    padding-top: 55px;
-    line-height: 1.8;
-    text-shadow: 0 2px 30px rgba(0,0,0,0.8);
-    letter-spacing: 0.02em;
-    word-wrap: break-word;
-  }
-  .hero-quran-verse {
-    font-family: 'Amiri', serif;
-    font-size: clamp(16px, 2.8vw, 30px);
-    color: #0a0a0a;
-    direction: rtl;
-    margin: 0 0 30px 0;
-    line-height: 3.2;
-    text-shadow: 0 2px 30px rgba(0,0,0,0.8);
-    letter-spacing: 0.02em;
-    word-wrap: break-word;
-    hyphens: auto;
-    max-width: 100%;
-  }
-
-  /* Ligne décorative dorée */
-  .hero-divider {
-    width: 80px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
-    margin: 0 auto 30px;
-    opacity: 0.6;
-  }
-
   .hero-title {
     font-family: 'Cinzel', Georgia, serif;
-    color: var(--gold-dark);
+    color:  var(--gold-dark);
     font-size: clamp(30px, 8vw, 70px);
     font-weight: 400;
     letter-spacing: .2em;
@@ -337,7 +332,7 @@
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-style: italic;
     font-weight: 500;
-    color: #0a0a0a;
+    color: #0e0d0d;
     font-size: clamp(40px, 10vw, 76px);
     line-height: 1.1;
     text-shadow: 0 2px 20px rgba(0,0,0,0.7);
@@ -345,12 +340,12 @@
   }
 
   /* ============================================================
-     INVITATION : Basmala + Verset (supprimée - déplacée dans hero)
+     INVITATION : Basmala + Verset
      ============================================================ */
   #invitation {
     position: relative;
     overflow: hidden;
-    min-height: 30vh;
+    min-height: 60vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -389,6 +384,31 @@
     50% { transform: translateY(6px); }
   }
 
+  .bismillah {
+    font-family: 'Amiri', serif;
+    color: var(--gold-dark);
+    font-size: clamp(24px, 4vw, 38px);
+    direction: rtl;
+    margin: 0 0 16px 0;
+    line-height: 1.7;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.6);
+    letter-spacing: 0.02em;
+    word-wrap: break-word;
+  }
+  .quran-verse {
+    font-family: 'Amiri', serif;
+    font-size: clamp(18px, 3vw, 30px);
+    color: #0a0a0a;
+    direction: rtl;
+    margin: 0;
+    line-height: 3;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.6);
+    letter-spacing: 0.02em;
+    word-wrap: break-word;
+    hyphens: auto;
+    max-width: 100%;
+  }
+
   /* ============================================================
      MESSAGE DE BIENVENUE - REMPLACÉ PAR LA PHOTO DE CARTE
      ============================================================ */
@@ -406,7 +426,6 @@
   .welcome-card-box img {
     width: 100%;
     height: auto;
-    
     display: block;
   }
 
@@ -723,6 +742,11 @@
 </head>
 <body>
 
+<!-- ================= AUDIO DE FOND ================= -->
+<audio id="weiAudio" loop>
+   <source src="assets/videos/ma-musique.mp3" type="audio/mp3">
+</audio>
+
 <!-- ================= ENVELOPPE (fond propre) ================= -->
 <div id="envelopeOverlay">
   <div class="envelope-inner" id="envelopeInner">
@@ -741,45 +765,30 @@
   </video>
 </div>
 
+<!-- ================= BOUTON AUDIO ================= -->
+<button id="audioBtn" aria-label="Activer/désactiver la musique">
+  <svg class="icon-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+  <svg class="icon-play" viewBox="0 0 24 24"><path d="M7 4l14 8-14 8V4z"/></svg>
+</button>
+
 <!-- ================= CONTENU PRINCIPAL ================= -->
 <main id="mainContent">
 
-  <!-- HERO - Avec Basmala, Verset, Mariage, Date et Bilal -->
+  <!-- HERO - Image de fond -->
   <section id="hero">
-    <!-- Image de fond - REMPLACEZ "votre-image-hero.jpg" par le nom de votre fichier -->
     <img id="hero-bg-image" src="assets/images/hero.jpg" alt="Fond mariage">
     
-    <div class="wrap">
-      
-      <!-- BASMALA -->
-      <p class="hero-bismillah reveal">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
-      
-      <!-- VERSET CORANIQUE -->
-      <p class="hero-quran-verse reveal">
-  ﴿ وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُمْ مِنْ أَنْفُسِكُمْ أَزْوَاجًا <br>
-  لِتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَوَدَّةً وَرَحْمَةً ﴾
-</p>
-      
-      <!-- Ligne décorative -->
-      <div class="hero-divider reveal"></div>
-      
-      <!-- TITRE MARIAGE -->
-      <h1 class="hero-title reveal">Mariage</h1>
-      
-      <!-- DATE -->
-      <p class="hero-date reveal">28.08.26</p>
-      
-      <!-- PRÉNOM BILAL -->
-      <span class="hero-name-groom reveal">Bilal</span>
-      
-    </div>
+    
   </section>
 
-  <!-- INVITATION : "Découvrez l'invitation" + flèche -->
+  <!-- INVITATION : "Découvrez l'invitation" + Basmala + Verset -->
   <section id="invitation">
     <div class="wrap">
       <p class="scroll-label reveal">Découvrez l'invitation</p>
       <svg class="scroll-chevron reveal" viewBox="0 0 25 15.86"><path fill="none" stroke-width="1.5" stroke-linecap="round" d="M1.0092 1.008C4.3691 5.4431 9.1402 9.565 12.5 14C16.8007 9.565 19.6901 5.4431 23.9908 1.008"/></svg>
+
+      <p class="bismillah reveal">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
+      <p class="quran-verse reveal">﴿ وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُمْ مِنْ أَنْفُسِكُمْ أَزْوَاجًا <br>لِتَسْكُنُوا  إِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَوَدَّةً وَرَحْمَةً ﴾</p>
     </div>
   </section>
 
@@ -930,6 +939,8 @@
   const tapToOpen = document.getElementById('tapToOpen');
   const videoContainer = document.getElementById('videoContainer');
   const introVideo = document.getElementById('introVideo');
+  const audio = document.getElementById('weiAudio');
+  const audioBtn = document.getElementById('audioBtn');
   const envelopeInner = document.getElementById('envelopeInner');
   const mainContent = document.getElementById('mainContent');
   const body = document.body;
@@ -956,6 +967,9 @@
 
     videoContainer.classList.add('visible');
     introVideo.play().catch(function() { /* autoplay bloqué */ });
+
+    audio.volume = 1;
+    audio.play().catch(function() {});
   }
 
   overlay.addEventListener('click', openEnvelope);
@@ -966,6 +980,7 @@
     setTimeout(function() {
       videoContainer.style.display = 'none';
     }, 1400);
+    audioBtn.classList.add('shown');
     body.classList.add('fond-invitation');
     mainContent.classList.add('visible');
   }
@@ -983,8 +998,20 @@
     overlay.classList.add('fade-out');
     setTimeout(function() { overlay.classList.add('hidden'); }, 1400);
     videoContainer.style.display = 'none';
+    audioBtn.classList.add('shown');
     body.classList.add('fond-invitation');
     mainContent.classList.add('visible');
+    audio.play().catch(function() {});
+  });
+
+  audioBtn.addEventListener('click', function() {
+    if (audio.paused) {
+      audio.play().catch(function() {});
+      audioBtn.classList.remove('paused');
+    } else {
+      audio.pause();
+      audioBtn.classList.add('paused');
+    }
   });
 })();
 
